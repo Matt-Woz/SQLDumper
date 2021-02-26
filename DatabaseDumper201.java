@@ -383,7 +383,7 @@ public class DatabaseDumper201 extends DatabaseDumper {
                             index = false;
                             break;
                         }
-                        statement.append("CREATE INDEX '").append(indexName).append("' ON ").append(table).append(" (").append(columnName).append(order);
+                        statement.append("DROP INDEX IF EXISTS \"").append(indexName).append("\";\nCREATE INDEX '").append(indexName).append("' ON ").append(table).append(" (").append(columnName).append(order);
                         firstLine = false;
                     }
                     else
