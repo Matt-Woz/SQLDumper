@@ -114,10 +114,32 @@ public class DatabaseDumper201 extends DatabaseDumper {
         return result;
     }
 
+    public String getDriverInfo()
+    {
+        String info = "";
+        try
+        {
+            DatabaseMetaData md = getConnection().getMetaData();
+            int majorDBVersion = md.getDatabaseMajorVersion();
+            int minorDBVersion = md.getDatabaseMinorVersion();
+            int majorJDBCVersion = md.getJDBCMajorVersion();
+            int minorJDBCVersion = md.getJDBCMinorVersion();
+            info = "-- Major database version: " + majorDBVersion + "\n-- Minor database version: " + minorDBVersion + "\n-- Major JDBC version: "
+                    + majorJDBCVersion + "\n-- Minor JDBC Version: " + minorJDBCVersion + "\n---\n";
+
+        }
+        catch (SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return info;
+    }
+
     @Override
     public String getDDLForTable(String tableName)
     {
-        StringBuilder sqlCreateStatement = new StringBuilder("CREATE TABLE " + '"' + tableName + '"' + " (\n"); //Create table statement
+
+        StringBuilder sqlCreateStatement = new StringBuilder("DROP TABLE IF EXISTS \""+ tableName + "\";\n" + "CREATE TABLE " + '"' + tableName + '"' + " (\n"); //Create table statement
         return getDDL(tableName, sqlCreateStatement);
     }
 
@@ -255,6 +277,7 @@ public class DatabaseDumper201 extends DatabaseDumper {
     @Override
     public String getDumpString()
     {
+        String info = getDriverInfo();
         List<String> views = getViewNames();
         List<String> orderedTables = sortedTables();
         StringBuilder tables = new StringBuilder();
@@ -284,7 +307,7 @@ public class DatabaseDumper201 extends DatabaseDumper {
         appendIndexes = appendIndexes.replace(";", ";\n---");
         appendViewInserts = appendViewInserts.replace(";", "\n---");
 
-        return tables.toString() + appendInserts + appendIndexes + comment + viewTables.toString() + appendViewInserts;
+        return info + tables.toString() + appendInserts + appendIndexes + comment + viewTables.toString() + appendViewInserts;
     }
 
     @Override
