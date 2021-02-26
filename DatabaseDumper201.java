@@ -160,7 +160,8 @@ public class DatabaseDumper201 extends DatabaseDumper {
     @Override
     public String getDDLForView(String viewName)
     {
-        StringBuilder sqlCreateStatement = new StringBuilder("CREATE TABLE " + "\"view_" + viewName + "\" (\n"); //Create table statement for the view
+        String newViewName = "view_" + viewName;
+        StringBuilder sqlCreateStatement = new StringBuilder("DROP TABLE IF EXISTS \""+ newViewName + "\"; \nCREATE TABLE \"" + newViewName + "\" (\n"); //Create table statement for the view
         return getDDL(viewName, sqlCreateStatement);
     }
 
@@ -285,7 +286,7 @@ public class DatabaseDumper201 extends DatabaseDumper {
         StringBuilder indexes = new StringBuilder();
         StringBuilder viewTables = new StringBuilder();
         StringBuilder viewInserts = new StringBuilder();
-        String comment = "\n-- Views: \n";
+        String comment = "\n-- Views: \n\n";
 
         for (String tableName : orderedTables) //Iterates through all tables
         {
